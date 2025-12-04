@@ -1,7 +1,18 @@
 import { GoogleGenAI } from "@google/genai";
 import { CategorySummary } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let ai: GoogleGenAI | null = null;
+const apiKey = process.env.API_KEY;
+
+// ✅ 安全初始化：只有在有 Key 的時候才啟動 AI
+if (apiKey) {
+  ai = new GoogleGenAI({ apiKey });
+} else {
+  // 這裡只是警告，不會讓程式當機
+  console.warn("API Key 未設定，AI 功能已停用");
+}
+
+export { ai };
 
 export const analyzePortfolio = async (categories: CategorySummary[], totalValue: number): Promise<string> => {
   try {
